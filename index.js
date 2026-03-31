@@ -3,18 +3,13 @@ const mongoose = require('mongoose');
 // const router = express.Router()
 const app = express()
 
-const router = require('./routing')
+const router = require('./routing');
+const dbConfig = require('./Config/dbConfig');
 const port = 8000
 
 app.use(router)
 
-
-mongoose.connect('mongodb+srv://Auths:XxtE9nw9V3Jo0lRw@cluster0.mjewgzf.mongodb.net/routing?appName=Cluster0')
-  .then(() => console.log('Connected!'));
-
-
-
- 
+ dbConfig()
 
 
 app.listen(port, () => {

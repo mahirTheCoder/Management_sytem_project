@@ -3,10 +3,12 @@ const { login } = require("../controllers/auth");
 const router = express.Router();
 
 const authroute = require('./authRoute')
+const productRoute = require('./productRoute')
 
 
-// router.post ('/login' , login)   
-router.use ()
+
+router.use ('/auth', authroute)
+router.use('/products', productRoute)
 
 
-module.exports = router;
+module.exports = router;    
