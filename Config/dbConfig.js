@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 
 const dbConfig = ()=>{
-  return  mongoose.connect('mongodb+srv://Auths:XxtE9nw9V3Jo0lRw@cluster0.mjewgzf.mongodb.net/routing?appName=Cluster0')
+  return  mongoose.connect(process.env.DB_URL, )
   .then(() => console.log('Connected!'));
 
 

@@ -1,15 +1,15 @@
 const express = require('express')
-const mongoose = require('mongoose');
-// const router = express.Router()
 const app = express()
+const port = 8000
 
 const router = require('./routing');
 const dbConfig = require('./Config/dbConfig');
-const port = 8000
+
+const dotenv = require('dotenv')
+dotenv.config()
 
 app.use(router)
 
- dbConfig()
 
 
 app.listen(port, () => {
