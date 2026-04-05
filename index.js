@@ -7,8 +7,9 @@ const dbConfig = require('./Config/dbConfig');
 
 const dotenv = require('dotenv')
 dotenv.config()
-
 app.use(router)
+// dbConfig()
+
 
 
 
