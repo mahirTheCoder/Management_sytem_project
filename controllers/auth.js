@@ -52,4 +52,4 @@ const registration = async (req, res) => {
 //   }
 // };
 
-module.exports = { registration, login };
+module.exports = { registration };

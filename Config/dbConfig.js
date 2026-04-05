@@ -6,6 +6,7 @@ const dbConfig = ()=>{
   .then(() => console.log('Connected!'));
 
 
+
 }
 
 module.exports = dbConfig;

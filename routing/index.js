@@ -3,7 +3,7 @@ const { login } = require("../controllers/auth");
 const router = express.Router();
 
 const authroute = require('./authRoute')
-const productRoute = require('./productRoute')
+// const productRoute = require('./productRoute')
 
 
 

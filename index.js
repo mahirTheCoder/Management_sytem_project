@@ -5,14 +5,18 @@ const port = 8000
 const router = require('./routing');
 const dbConfig = require('./Config/dbConfig');
 
-const dotenv = require('dotenv')
-dotenv.config()
+require('dotenv').config();
+dbConfig();
+
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+app.use(express.json());
+
 app.use(router)
-// dbConfig()
-
-
 
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+
