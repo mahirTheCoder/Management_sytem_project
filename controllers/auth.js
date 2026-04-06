@@ -1,11 +1,9 @@
 const authSchema = require("../model/authSchema");
+const bcrypt = require("bcrypt");
 const { isValidEmail } = require("../helpers/utils");
-
-
 
 const registration = async (req, res) => {
   const { fullName, email, password } = req.body;
-
 
   try {
     if (!fullName?.trim())
@@ -17,39 +15,40 @@ const registration = async (req, res) => {
       return res.status(400).send({ message: "Password is required." });
 
     const existEmail = await authSchema.findOne({ email });
-
     if (existEmail)
-      return res.status(400).send({ message: "This email already registerd" });
+      return res.status(400).send({ message: "This email is already registered." });
 
-    const user = await authSchema({ fullName, email, password });
-    user.save();
+    const user = new authSchema({ fullName, email, password });
+    await user.save();
 
-    res
-      .status(200)
-      .send({ message: "Registration Successfully Please verify your email" });
+    res.status(201).send({ message: "Registration successful." });
   } catch (error) {
-    console.log(error);
-
-    res.status(500).send({ message: "Internal Server Error!" });
+    console.error(error);
+    res.status(500).send({ message: "Internal Server Error." });
   }
 };
 
+const login = async (req, res) => {
+  const { email, password } = req.body;
 
+  try {
+    if (!email) return res.status(400).send({ message: "Email is required." });
+    if (!password)
+      return res.status(400).send({ message: "Password is required." });
 
-// const login = (req, res) => {
-//   const { username, password } = req.body;
+    const user = await authSchema.findOne({ email });
+    if (!user)
+      return res.status(401).send({ message: "Invalid email or password." });
 
-//   try {
-//  const userdata = authSchema.findOne({ email: username, password: password });
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword)
+      return res.status(401).send({ message: "Invalid email or password." });
 
-//  if (!userdata) {
-//   return res.status(401).send({ message: "Invalid credentials" });
-//  }
+    res.status(200).send({ message: "Login successful." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Login failed." });
+  }
+};
 
-//     res.status(200).send({ message: "Login successful" });
-//   } catch (error) {
-//     res.status(500).send({ message: "Login failed" });
-//   }
-// };
-
-module.exports = { registration };
+module.exports = { registration, login };

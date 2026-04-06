@@ -39,10 +39,8 @@ authSchema.pre('save', async function () {
         const salt = await bcrypt.genSalt(saltRounds);
         this.password = await bcrypt.hash(this.password, salt);
     } catch (err) {
-        res.status(500).send({ message: "Server error" })
+        throw err;
     }
 });
 
-
-
-module.exports = mongoose.model('auth', authSchema)
+module.exports = mongoose.model('auth', authSchema);
