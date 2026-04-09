@@ -51,4 +51,13 @@ authSchema.pre("save", async function () {
   }
 });
 
+// Instance method to compare password
+authSchema.methods.comparePassword = async function (candidatePassword) {
+  try {
+    return await bcrypt.compare(candidatePassword, this.password);
+  } catch (err) {
+    throw err;
+  }
+};
+
 module.exports = mongoose.model("auth", authSchema);

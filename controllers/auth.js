@@ -1,5 +1,4 @@
 const authSchema = require("../model/authSchema");
-const bcrypt = require("bcrypt");
 const {
   isValidEmail,
   generateOTPSecret,
@@ -48,7 +47,7 @@ const login = async (req, res) => {
     if (!user)
       return res.status(401).send({ message: "Invalid email or password." });
 
-    const validPassword = await bcrypt.compare(password, user.password);
+    const validPassword = await user.comparePassword(password);
     if (!validPassword)
       return res.status(401).send({ message: "Invalid email or password." });
 
