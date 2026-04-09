@@ -1,11 +1,11 @@
 const express = require("express");
-const { 
-  login, 
-  registration, 
-  setupTwoFactor, 
-  verifyAndEnableTwoFactor, 
-  loginWithOTP, 
-  disableTwoFactor 
+const {
+  login,
+  registration,
+  setupTwoFactor,
+  verifyAndEnableTwoFactor,
+  loginWithOTP,
+  disableTwoFactor,
 } = require("../controllers/auth");
 const router = express.Router();
 

@@ -1,11 +1,11 @@
 const authSchema = require("../model/authSchema");
 const bcrypt = require("bcrypt");
-const { 
-    isValidEmail, 
-    generateOTPSecret, 
-    generateOTPQRCode, 
-    verifyOTP,
-    generateOTPToken 
+const {
+  isValidEmail,
+  generateOTPSecret,
+  generateOTPQRCode,
+  verifyOTP,
+  generateOTPToken,
 } = require("../helpers/utils");
 
 const registration = async (req, res) => {
@@ -22,7 +22,9 @@ const registration = async (req, res) => {
 
     const existEmail = await authSchema.findOne({ email });
     if (existEmail)
-      return res.status(400).send({ message: "This email is already registered." });
+      return res
+        .status(400)
+        .send({ message: "This email is already registered." });
 
     const user = new authSchema({ fullName, email, password });
     await user.save();
@@ -52,10 +54,10 @@ const login = async (req, res) => {
 
     // If 2FA is enabled, require OTP token
     if (user.isTwoFactorEnabled) {
-      return res.status(200).send({ 
+      return res.status(200).send({
         message: "Password verified. Please provide OTP token.",
         requiresOTP: true,
-        userId: user._id
+        userId: user._id,
       });
     }
 
@@ -76,12 +78,14 @@ const setupTwoFactor = async (req, res) => {
     if (!user) return res.status(404).send({ message: "User not found." });
 
     if (user.isTwoFactorEnabled) {
-      return res.status(400).send({ message: "Two-factor authentication is already enabled." });
+      return res
+        .status(400)
+        .send({ message: "Two-factor authentication is already enabled." });
     }
 
     // Generate OTP secret
     const secret = generateOTPSecret();
-    
+
     // Generate QR code
     const qrCode = await generateOTPQRCode(secret);
 
@@ -93,11 +97,13 @@ const setupTwoFactor = async (req, res) => {
       message: "Two-factor authentication setup initiated.",
       secret: secret.base32,
       qrCode: qrCode,
-      otpauth_url: secret.otpauth_url
+      otpauth_url: secret.otpauth_url,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ message: "Failed to setup two-factor authentication." });
+    res
+      .status(500)
+      .send({ message: "Failed to setup two-factor authentication." });
   }
 };
 
@@ -106,17 +112,22 @@ const verifyAndEnableTwoFactor = async (req, res) => {
 
   try {
     if (!email) return res.status(400).send({ message: "Email is required." });
-    if (!token) return res.status(400).send({ message: "OTP token is required." });
+    if (!token)
+      return res.status(400).send({ message: "OTP token is required." });
 
     const user = await authSchema.findOne({ email });
     if (!user) return res.status(404).send({ message: "User not found." });
 
     if (user.isTwoFactorEnabled) {
-      return res.status(400).send({ message: "Two-factor authentication is already enabled." });
+      return res
+        .status(400)
+        .send({ message: "Two-factor authentication is already enabled." });
     }
 
     if (!user.otpSecret) {
-      return res.status(400).send({ message: "Please setup two-factor authentication first." });
+      return res
+        .status(400)
+        .send({ message: "Please setup two-factor authentication first." });
     }
 
     // Verify the token
@@ -129,10 +140,14 @@ const verifyAndEnableTwoFactor = async (req, res) => {
     user.isTwoFactorEnabled = true;
     await user.save();
 
-    res.status(200).send({ message: "Two-factor authentication enabled successfully." });
+    res
+      .status(200)
+      .send({ message: "Two-factor authentication enabled successfully." });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ message: "Failed to enable two-factor authentication." });
+    res
+      .status(500)
+      .send({ message: "Failed to enable two-factor authentication." });
   }
 };
 
@@ -140,14 +155,18 @@ const loginWithOTP = async (req, res) => {
   const { userId, token } = req.body;
 
   try {
-    if (!userId) return res.status(400).send({ message: "User ID is required." });
-    if (!token) return res.status(400).send({ message: "OTP token is required." });
+    if (!userId)
+      return res.status(400).send({ message: "User ID is required." });
+    if (!token)
+      return res.status(400).send({ message: "OTP token is required." });
 
     const user = await authSchema.findById(userId);
     if (!user) return res.status(404).send({ message: "User not found." });
 
     if (!user.isTwoFactorEnabled || !user.otpSecret) {
-      return res.status(400).send({ message: "Two-factor authentication is not enabled for this user." });
+      return res.status(400).send({
+        message: "Two-factor authentication is not enabled for this user.",
+      });
     }
 
     // Verify the token
@@ -156,7 +175,9 @@ const loginWithOTP = async (req, res) => {
       return res.status(400).send({ message: "Invalid OTP token." });
     }
 
-    res.status(200).send({ message: "Login successful with two-factor authentication." });
+    res
+      .status(200)
+      .send({ message: "Login successful with two-factor authentication." });
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "OTP verification failed." });
@@ -168,13 +189,16 @@ const disableTwoFactor = async (req, res) => {
 
   try {
     if (!email) return res.status(400).send({ message: "Email is required." });
-    if (!token) return res.status(400).send({ message: "OTP token is required." });
+    if (!token)
+      return res.status(400).send({ message: "OTP token is required." });
 
     const user = await authSchema.findOne({ email });
     if (!user) return res.status(404).send({ message: "User not found." });
 
     if (!user.isTwoFactorEnabled) {
-      return res.status(400).send({ message: "Two-factor authentication is not enabled." });
+      return res
+        .status(400)
+        .send({ message: "Two-factor authentication is not enabled." });
     }
 
     // Verify the token before disabling
@@ -188,18 +212,22 @@ const disableTwoFactor = async (req, res) => {
     user.otpSecret = null;
     await user.save();
 
-    res.status(200).send({ message: "Two-factor authentication disabled successfully." });
+    res
+      .status(200)
+      .send({ message: "Two-factor authentication disabled successfully." });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ message: "Failed to disable two-factor authentication." });
+    res
+      .status(500)
+      .send({ message: "Failed to disable two-factor authentication." });
   }
 };
 
-module.exports = { 
-  registration, 
-  login, 
-  setupTwoFactor, 
-  verifyAndEnableTwoFactor, 
-  loginWithOTP, 
-  disableTwoFactor 
+module.exports = {
+  registration,
+  login,
+  setupTwoFactor,
+  verifyAndEnableTwoFactor,
+  loginWithOTP,
+  disableTwoFactor,
 };

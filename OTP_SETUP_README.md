@@ -12,9 +12,11 @@ This project now includes proper OTP (One-Time Password) setup for enhanced secu
 ## API Endpoints
 
 ### 1. Setup Two-Factor Authentication
+
 **POST** `/auth/setup-2fa`
 
 Request Body:
+
 ```json
 {
   "email": "user@example.com"
@@ -22,6 +24,7 @@ Request Body:
 ```
 
 Response:
+
 ```json
 {
   "message": "Two-factor authentication setup initiated.",
@@ -32,9 +35,11 @@ Response:
 ```
 
 ### 2. Verify and Enable 2FA
+
 **POST** `/auth/verify-2fa`
 
 Request Body:
+
 ```json
 {
   "email": "user@example.com",
@@ -43,6 +48,7 @@ Request Body:
 ```
 
 Response:
+
 ```json
 {
   "message": "Two-factor authentication enabled successfully."
@@ -50,9 +56,11 @@ Response:
 ```
 
 ### 3. Login (Updated Flow)
+
 **POST** `/auth/login`
 
 Request Body:
+
 ```json
 {
   "email": "user@example.com",
@@ -61,6 +69,7 @@ Request Body:
 ```
 
 Response (if 2FA enabled):
+
 ```json
 {
   "message": "Password verified. Please provide OTP token.",
@@ -70,9 +79,11 @@ Response (if 2FA enabled):
 ```
 
 ### 4. Login with OTP
+
 **POST** `/auth/login-2fa`
 
 Request Body:
+
 ```json
 {
   "userId": "60f1b2b3c4d5e6f7g8h9i0j1",
@@ -81,6 +92,7 @@ Request Body:
 ```
 
 Response:
+
 ```json
 {
   "message": "Login successful with two-factor authentication."
@@ -88,9 +100,11 @@ Response:
 ```
 
 ### 5. Disable 2FA
+
 **POST** `/auth/disable-2fa`
 
 Request Body:
+
 ```json
 {
   "email": "user@example.com",
@@ -99,6 +113,7 @@ Request Body:
 ```
 
 Response:
+
 ```json
 {
   "message": "Two-factor authentication disabled successfully."
@@ -143,7 +158,7 @@ Response:
 
 Example curl commands:
 
-```bash
+````bash
 # Setup 2FA
 curl -X POST http://localhost:3000/auth/setup-2fa \
   -H "Content-Type: application/json" \
@@ -155,3 +170,4 @@ curl -X POST http://localhost:3000/auth/verify-2fa \
   -d '{"email":"user@example.com","token":"123456"}'
 ```</content>
 <parameter name="filePath">c:\Users\User\OneDrive\Desktop\Management_sytem_project\OTP_SETUP_README.md
+````
