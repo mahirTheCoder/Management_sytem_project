@@ -163,7 +163,37 @@ const loginWithOTP = async (req, res) => {
   }
 };
 
+const disableTwoFactor = async (req, res) => {
+  const { email, token } = req.body;
 
+  try {
+    if (!email) return res.status(400).send({ message: "Email is required." });
+    if (!token) return res.status(400).send({ message: "OTP token is required." });
+
+    const user = await authSchema.findOne({ email });
+    if (!user) return res.status(404).send({ message: "User not found." });
+
+    if (!user.isTwoFactorEnabled) {
+      return res.status(400).send({ message: "Two-factor authentication is not enabled." });
+    }
+
+    // Verify the token before disabling
+    const isValid = verifyOTP(user.otpSecret, token);
+    if (!isValid) {
+      return res.status(400).send({ message: "Invalid OTP token." });
+    }
+
+    // Disable 2FA
+    user.isTwoFactorEnabled = false;
+    user.otpSecret = null;
+    await user.save();
+
+    res.status(200).send({ message: "Two-factor authentication disabled successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Failed to disable two-factor authentication." });
+  }
+};
 
 module.exports = { 
   registration, 
