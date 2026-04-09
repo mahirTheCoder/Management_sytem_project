@@ -1,6 +1,12 @@
 const authSchema = require("../model/authSchema");
 const bcrypt = require("bcrypt");
-const { isValidEmail } = require("../helpers/utils");
+const { 
+    isValidEmail, 
+    generateOTPSecret, 
+    generateOTPQRCode, 
+    verifyOTP,
+    generateOTPToken 
+} = require("../helpers/utils");
 
 const registration = async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -44,6 +50,15 @@ const login = async (req, res) => {
     if (!validPassword)
       return res.status(401).send({ message: "Invalid email or password." });
 
+    // If 2FA is enabled, require OTP token
+    if (user.isTwoFactorEnabled) {
+      return res.status(200).send({ 
+        message: "Password verified. Please provide OTP token.",
+        requiresOTP: true,
+        userId: user._id
+      });
+    }
+
     res.status(200).send({ message: "Login successful." });
   } catch (error) {
     console.error(error);
@@ -51,4 +66,13 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { registration, login };
+
+
+module.exports = { 
+  registration, 
+  login, 
+  setupTwoFactor, 
+  verifyAndEnableTwoFactor, 
+  loginWithOTP, 
+  disableTwoFactor 
+};

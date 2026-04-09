@@ -29,6 +29,14 @@ const authSchema = new mongoose.Schema({
     },
     otpExpiry: {
         type: Date,
+    },
+    otpSecret: {
+        type: String,
+        default: null
+    },
+    isTwoFactorEnabled: {
+        type: Boolean,
+        default: false
     }
 })
 
