@@ -66,6 +66,41 @@ const login = async (req, res) => {
   }
 };
 
+const setupTwoFactor = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    if (!email) return res.status(400).send({ message: "Email is required." });
+
+    const user = await authSchema.findOne({ email });
+    if (!user) return res.status(404).send({ message: "User not found." });
+
+    if (user.isTwoFactorEnabled) {
+      return res.status(400).send({ message: "Two-factor authentication is already enabled." });
+    }
+
+    // Generate OTP secret
+    const secret = generateOTPSecret();
+    
+    // Generate QR code
+    const qrCode = await generateOTPQRCode(secret);
+
+    // Save secret temporarily (user needs to verify before enabling)
+    user.otpSecret = secret.base32;
+    await user.save();
+
+    res.status(200).send({
+      message: "Two-factor authentication setup initiated.",
+      secret: secret.base32,
+      qrCode: qrCode,
+      otpauth_url: secret.otpauth_url
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Failed to setup two-factor authentication." });
+  }
+};
+
 
 
 module.exports = { 
