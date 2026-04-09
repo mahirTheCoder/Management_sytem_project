@@ -136,6 +136,33 @@ const verifyAndEnableTwoFactor = async (req, res) => {
   }
 };
 
+const loginWithOTP = async (req, res) => {
+  const { userId, token } = req.body;
+
+  try {
+    if (!userId) return res.status(400).send({ message: "User ID is required." });
+    if (!token) return res.status(400).send({ message: "OTP token is required." });
+
+    const user = await authSchema.findById(userId);
+    if (!user) return res.status(404).send({ message: "User not found." });
+
+    if (!user.isTwoFactorEnabled || !user.otpSecret) {
+      return res.status(400).send({ message: "Two-factor authentication is not enabled for this user." });
+    }
+
+    // Verify the token
+    const isValid = verifyOTP(user.otpSecret, token);
+    if (!isValid) {
+      return res.status(400).send({ message: "Invalid OTP token." });
+    }
+
+    res.status(200).send({ message: "Login successful with two-factor authentication." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "OTP verification failed." });
+  }
+};
+
 
 
 module.exports = { 
