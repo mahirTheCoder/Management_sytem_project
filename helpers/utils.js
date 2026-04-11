@@ -114,6 +114,35 @@ function getEmailTransporter() {
     });
 }
 
+// Send verification email
+async function sendVerificationEmail(email, token, fullName) {
+    try {
+        const transporter = getEmailTransporter();
+        const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email/${token}`;
+        
+        const mailOptions = {
+            from: process.env.EMAIL_USER || 'noreply@managementsystem.com',
+            to: email,
+            subject: 'Verify Your Email',
+            html: `
+                <h2>Welcome ${fullName}!</h2>
+                <p>Please click the link below to verify your email:</p>
+                <a href="${verificationUrl}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                    Verify Email
+                </a>
+                <p>Or copy this link: ${verificationUrl}</p>
+                <p>This link expires in 24 hours.</p>
+            `
+        };
+        
+        await transporter.sendMail(mailOptions);
+        return true;
+    } catch (error) {
+        console.error('Email sending failed:', error);
+        return false;
+    }
+}
+
 
 
 module.exports = { 
