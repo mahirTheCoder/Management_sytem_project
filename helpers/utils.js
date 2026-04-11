@@ -143,7 +143,36 @@ async function sendVerificationEmail(email, token, fullName) {
     }
 }
 
-
+// Send password reset email
+async function sendPasswordResetEmail(email, token, fullName) {
+    try {
+        const transporter = getEmailTransporter();
+        const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password/${token}`;
+        
+        const mailOptions = {
+            from: process.env.EMAIL_USER || 'noreply@managementsystem.com',
+            to: email,
+            subject: 'Password Reset Request',
+            html: `
+                <h2>Password Reset Request</h2>
+                <p>Hi ${fullName},</p>
+                <p>We received a password reset request for your account.</p>
+                <a href="${resetUrl}" style="background-color: #008CBA; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                    Reset Password
+                </a>
+                <p>Or copy this link: ${resetUrl}</p>
+                <p>This link expires in 1 hour.</p>
+                <p>If you didn't request this, please ignore this email.</p>
+            `
+        };
+        
+        await transporter.sendMail(mailOptions);
+        return true;
+    } catch (error) {
+        console.error('Email sending failed:', error);
+        return false;
+    }
+}
 
 module.exports = { 
     isValidEmail,
