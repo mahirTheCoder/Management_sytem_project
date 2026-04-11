@@ -82,6 +82,28 @@ function generateRefreshToken(userId, expiresIn = '7d') {
 }
 
 
+// Verify refresh token
+function verifyRefreshToken(token) {
+    try {
+        return jwt.verify(token, process.env.JWT_REFRESH_SECRET || 'refresh-secret-key');
+    } catch (error) {
+        return null;
+    }
+}
+
+// Generate random token for email verification or password reset
+function generateRandomToken() {
+    return crypto.randomBytes(32).toString('hex');
+}
+
+// Hash token for storage
+function hashToken(token) {
+    return crypto.createHash('sha256').update(token).digest('hex');
+}
+
+// Setup email transporter
+x
+
 module.exports = { 
     isValidEmail,
     isValidPassword,
