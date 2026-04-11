@@ -54,6 +54,15 @@ function generateOTPToken(secret) {
     });
 }
 
+// Generate JWT token
+function generateJWT(userId, expiresIn = '1h') {
+    return jwt.sign(
+        { userId },
+        process.env.JWT_SECRET || 'your-secret-key',
+        { expiresIn }
+    );
+}
+
 
 
 module.exports = { 
