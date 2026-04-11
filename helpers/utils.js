@@ -63,6 +63,23 @@ function generateJWT(userId, expiresIn = '1h') {
     );
 }
 
+// Verify JWT token
+function verifyJWT(token) {
+    try {
+        return jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    } catch (error) {
+        return null;
+    }
+}
+
+// Generate refresh token
+function generateRefreshToken(userId, expiresIn = '7d') {
+    return jwt.sign(
+        { userId, type: 'refresh' },
+        process.env.JWT_REFRESH_SECRET || 'refresh-secret-key',
+        { expiresIn }
+    );
+}
 
 
 module.exports = { 
