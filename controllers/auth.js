@@ -140,7 +140,14 @@ const simpleRegister = async (req, res) => {
           "Password must be at least 8 characters with uppercase, number, and special character.",
       });
 
- 
+    // Check if user exists
+    const existingUser = await authSchema.findOne({ email: email.toLowerCase() });
+    if (existingUser)
+      return res
+        .status(409)
+        .send({ message: "Email already registered." });
+
+
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Registration failed." });
