@@ -147,7 +147,25 @@ const simpleRegister = async (req, res) => {
         .status(409)
         .send({ message: "Email already registered." });
 
+    // Create user with verified status
+    const newUser = new authSchema({
+      fullName: fullName.trim(),
+      email: email.toLowerCase(),
+      password,
+      isVerified: true, // Auto-verify for simple registration
+    });
 
+    await newUser.save();
+
+    res.status(201).send({
+      message: "Registration successful. You can now login.",
+      userId: newUser._id,
+      user: {
+        id: newUser._id,
+        fullName: newUser.fullName,
+        email: newUser.email,
+      },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Registration failed." });
