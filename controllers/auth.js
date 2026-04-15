@@ -117,6 +117,36 @@ const verifyEmail = async (req, res) => {
   }
 };
 
+// Simple Registration without email verification
+const simpleRegister = async (req, res) => {
+  const { fullName, email, password, confirmPassword } = req.body;
+
+  try {
+    // Validation
+    if (!fullName?.trim())
+      return res.status(400).send({ message: "Full name is required." });
+    if (!email) return res.status(400).send({ message: "Email is required." });
+    if (!isValidEmail(email))
+      return res.status(400).send({ message: "Email is invalid." });
+    if (!password)
+      return res.status(400).send({ message: "Password is required." });
+    if (password !== confirmPassword)
+      return res
+        .status(400)
+        .send({ message: "Passwords do not match." });
+    if (!isValidPassword(password))
+      return res.status(400).send({
+        message:
+          "Password must be at least 8 characters with uppercase, number, and special character.",
+      });
+
+ 
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Registration failed." });
+  }
+};
+
 // Login with JWT token generation
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -532,6 +562,7 @@ const disableTwoFactor = async (req, res) => {
 
 module.exports = {
   registration,
+  simpleRegister,
   verifyEmail,
   login,
   refreshAccessToken,

@@ -2,6 +2,7 @@ const express = require("express");
 const {
   login,
   registration,
+  simpleRegister,
   verifyEmail,
   refreshAccessToken,
   logout,
@@ -19,6 +20,7 @@ const router = express.Router();
 
 // Public routes
 router.post("/registration", registration);
+router.post("/simple-register", simpleRegister);
 router.post("/verify-email", verifyEmail);
 router.post("/login", login);
 router.post("/refresh-token", refreshAccessToken);
