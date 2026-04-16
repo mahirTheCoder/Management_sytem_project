@@ -35,3 +35,31 @@ function makeRequest(data) {
       },
     };
 
+    const req = http.request(options, (res) => {
+      let responseBody = '';
+
+      res.on('data', (chunk) => {
+        responseBody += chunk;
+      });
+
+      res.on('end', () => {
+        resolve({
+          statusCode: res.statusCode,
+          body: responseBody,
+        });
+      });
+    });
+
+    req.on('error', (error) => {
+      reject(error);
+    });
+
+    req.write(JSON.stringify(data));
+    req.end();
+  });
+}
+
+
+// Start tests
+console.log(`${colors.yellow}Checking server connection...${colors.reset}`);
+checkServer();
