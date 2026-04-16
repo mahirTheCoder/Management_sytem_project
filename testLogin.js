@@ -59,6 +59,56 @@ function makeRequest(data) {
   });
 }
 
+// Test cases
+const testCases = [
+  {
+    name: 'Valid Login (Correct Credentials)',
+    data: {
+      email: 'user@example.com',
+      password: 'SecurePass123!',
+    },
+    expectedStatus: 200,
+  },
+  {
+    name: 'Missing Email',
+    data: {
+      password: 'SecurePass123!',
+    },
+    expectedStatus: 400,
+  },
+  {
+    name: 'Missing Password',
+    data: {
+      email: 'user@example.com',
+    },
+    expectedStatus: 400,
+  },
+  {
+    name: 'Invalid Email Format (User Does Not Exist)',
+    data: {
+      email: 'nonexistent@example.com',
+      password: 'SecurePass123!',
+    },
+    expectedStatus: 401,
+  },
+  {
+    name: 'Wrong Password',
+    data: {
+      email: 'user@example.com',
+      password: 'WrongPassword123!',
+    },
+    expectedStatus: 401,
+  },
+  {
+    name: 'Empty Credentials',
+    data: {
+      email: '',
+      password: '',
+    },
+    expectedStatus: 400,
+  },
+];
+
 
 // Start tests
 console.log(`${colors.yellow}Checking server connection...${colors.reset}`);
