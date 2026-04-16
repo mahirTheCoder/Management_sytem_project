@@ -109,6 +109,62 @@ const testCases = [
   },
 ];
 
+// Run tests
+async function runTests() {
+  console.log(`\n${colors.blue}=== Login API Test Suite ===${colors.reset}\n`);
+  console.log(`Testing: ${API_URL}\n`);
+
+  let passed = 0;
+  let failed = 0;
+
+  for (const testCase of testCases) {
+    try {
+      console.log(`${colors.yellow}Testing: ${testCase.name}${colors.reset}`);
+      console.log(`Request: ${JSON.stringify(testCase.data)}`);
+
+      const response = await makeRequest(testCase.data);
+      const body = JSON.parse(response.body);
+
+      const statusMatch = response.statusCode === testCase.expectedStatus;
+      const statusColor = statusMatch ? colors.green : colors.red;
+
+      console.log(`${statusColor}Status: ${response.statusCode}${colors.reset}`);
+      console.log(`Response: ${JSON.stringify(body, null, 2)}`);
+
+      if (statusMatch) {
+        console.log(`${colors.green}✓ PASSED${colors.reset}\n`);
+        passed++;
+      } else {
+        console.log(
+          `${colors.red}✗ FAILED - Expected status ${testCase.expectedStatus}, got ${response.statusCode}${colors.reset}\n`
+        );
+        failed++;
+      }
+    } catch (error) {
+      console.log(`${colors.red}✗ ERROR: ${error.message}${colors.reset}\n`);
+      failed++;
+    }
+  }
+
+  console.log(`${colors.blue}=== Test Summary ===${colors.reset}`);
+  console.log(`${colors.green}Passed: ${passed}${colors.reset}`);
+  console.log(`${colors.red}Failed: ${failed}${colors.reset}`);
+  console.log(`Total: ${testCases.length}\n`);
+
+  if (failed === 0) {
+    console.log(
+      `${colors.green}All tests passed! ✓${colors.reset}\n`
+    );
+    process.exit(0);
+  } else {
+    console.log(
+      `${colors.red}Some tests failed! ✗${colors.reset}\n`
+    );
+    process.exit(1);
+  }
+}
+
+
 
 // Start tests
 console.log(`${colors.yellow}Checking server connection...${colors.reset}`);
