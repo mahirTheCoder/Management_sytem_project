@@ -164,7 +164,31 @@ async function runTests() {
   }
 }
 
+// Check if server is running
+function checkServer() {
+  const checkReq = http.request(
+    {
+      hostname: API_HOST,
+      port: API_PORT,
+      path: '/auth/login',
+      method: 'GET',
+      timeout: 3000,
+    },
+    () => {
+      runTests();
+    }
+  );
 
+  checkReq.on('error', () => {
+    console.log(
+      `${colors.red}✗ Error: Cannot connect to server at ${API_URL}${colors.reset}`
+    );
+    console.log(`${colors.yellow}Make sure the server is running: npm start${colors.reset}\n`);
+    process.exit(1);
+  });
+
+  checkReq.abort();
+}
 
 // Start tests
 console.log(`${colors.yellow}Checking server connection...${colors.reset}`);
